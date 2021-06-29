@@ -25,7 +25,7 @@ def main(args):
             n += 1
             if fb.finish != 0:
                 agent1.lose(fb)
-    filename = str(args.n_iter) + "trained.pkl"
+    filename = str(args.n_iter) + "_vsrandom"
     agent1.save_param(args.save_path, filename)
     print("Done.")
 

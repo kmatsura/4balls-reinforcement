@@ -30,7 +30,7 @@ def main(mode):
                 print("You win!!")
     elif mode == "reinforce":
         agent1 = Agent(7, 4, 1, mode="reinforce")
-        agent1.load_param("./data/model_parameters/learned_param-2021-06-29-18:27:00.pkl")
+        agent1.load_param("./data/model_parameters/learned_param-2000_vsrandom.pkl")
         while(fb.finish == 0 and fb.cand):
             print("===turn {}====".format(n))
             print("computer")
