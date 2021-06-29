@@ -10,3 +10,11 @@ python3 4balls/demo.py -m reinforce
 ```
 python3 4balls/demo.py -m random
 ```
+- モデルの訓練をする。
+```
+python3 4balls/train.py -n 訓練回数
+```
+- モデルの評価をする。
+```
+python3 4balls/eval.py
+```
