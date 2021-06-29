@@ -1,12 +1,10 @@
 import os
 import random
 import pickle
+import copy
 
 
 class Agent:
-    """
-    TODO: 負けたときに報酬をマイナス1する機能。
-    """
 
     def __init__(self, w, h, c, lr=0.01, mode="reinforce"):
         """
@@ -18,8 +16,8 @@ class Agent:
         self.oc = int(c*-1 + 3)  # opponent colorf: 1->2, 2->1
         self.lr = lr
         self.mode = mode
-        self.W = self.w * (self.h-2) * (self.w-2) * \
-            (self.h-2) ** 2 * (self.w-1) * (self.h-1) ** 2 + 1
+        self.W = (self.w-2) * self.h * (self.w-2) ** 2 *\
+            (self.h-2) ** 2 * (self.w-1)**2  * (self.h-1) ** 2 + 1
         self.Q = self.get_init_prob()  # 二次元配列state*cand これが学習するパラメータ
 
     def get_init_prob(self):
@@ -53,7 +51,7 @@ class Agent:
         盤面の評価値を計算する。ルールで決まったら期待報酬の計算はしない。
         """
         col = self.calc_rule_score(game)
-        print(col)
+        # print(col)
         if col:
             return col
         elif self.mode == "random":
@@ -74,22 +72,22 @@ class Agent:
         """
         p1 = self.check_rule1(game)
         if p1:
-            print("rule1")
+            # print("rule1")
             encodered_state = self.encode_board(game)
             for i in range(7):
                 self.Q[encodered_state][i] = 1
             return p1
         p2 = self.check_rule2(game)
         if p2:
-            print("rule2")
+            # print("rule2")
             return p2
         p3 = self.check_rule3(game)
         if p3:
-            print("rule3")
+            # print("rule3")
             return p3
         p4 = self.check_rule4(game)
         if p4:
-            print("rule4")
+            # print("rule4")
             return p4
         return None
 
@@ -332,16 +330,16 @@ class Agent:
         盤面を数値にエンコーディングする。
         計算リソースの都合上自分のだけ見る。
         """
-        dim_f1a = self.filter1(game, self.c)  # 0~self.w*(self.h-2)
-        assert 0 <= dim_f1a <= self.w*(self.h-2)
+        dim_f1a = self.filter1(game, self.c)  # 0~(self.w-2)*(self.h)
+        assert 0 <= dim_f1a <= (self.w-2)*(self.h), (dim_f1a, (self.w-2)*(self.h))
         dim_f2a = self.filter2(game, self.c)  # 0~(self.w-2)*(self.h-2)
-        assert 0 <= dim_f2a <= (self.w-2)*(self.h-2)
+        assert 0 <= dim_f2a <= (self.w-2)*(self.h-2), dim_f2a
         dim_f3a = self.filter3(game, self.c)
-        assert 0 <= dim_f3a <= (self.w-2)*(self.h-2)
+        assert 0 <= dim_f3a <= (self.w-2)*(self.h-2), dim_f3a
         dim_f4a = self.filter4(game, self.c)
-        assert 0 <= dim_f4a <= (self.w-1)*(self.h-1)
+        assert 0 <= dim_f4a <= (self.w-1)*(self.h-1), dim_f4a
         dim_f5a = self.filter5(game, self.c)
-        assert 0 <= dim_f5a <= (self.w-1)*(self.h-1)
+        assert 0 <= dim_f5a <= (self.w-1)*(self.h-1), dim_f5a
         state_num = 0
         state_num += dim_f1a * (self.w-2) * \
             (self.h-2) ** 2 * (self.w-1) * (self.h-1) ** 2
@@ -350,6 +348,7 @@ class Agent:
         state_num += dim_f3a * (self.w-1) * (self.h-1) ** 2
         state_num += dim_f4a * (self.w-1) * (self.h-1)
         state_num += dim_f5a
+        assert 0 <= state_num < len(self.Q), (state_num, len(self.Q))
         return state_num
 
     def filter1(self, game, c):
@@ -478,7 +477,7 @@ class Agent:
         """
         相手の気持ちになって考える。
         """
-        tmp_game = game.deepcopy()
+        tmp_game = copy.deepcopy(game)
         tmp_game.put_ball(col, self.c)
         # 相手の気持ちになる。
         self.c, self.oc = self.oc, self.c

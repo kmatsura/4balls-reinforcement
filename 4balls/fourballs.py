@@ -24,7 +24,7 @@ class FourBalls:
             self.finish = self.check_four(col, self.h-d-1, c)
             if self.finish != 0:
                 self.winner = c
-                print("winner is {}".format(c))
+                # print("winner is {}".format(c))
             if self.board[0][col] != 0:
                 self.cand.remove(col)
             return
