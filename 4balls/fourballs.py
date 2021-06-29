@@ -10,21 +10,23 @@ class FourBalls:
         self.board = [[0 for _ in range(w)] for _ in range(h)]
         self.board_height = [0 for _ in range(w)]
         self.cand = [i for i in range(w)]
+        self.hist = []
 
-    def put_ball(self, x, c):
-        if self.board[0][x] != 0:
+    def put_ball(self, col, c):
+        if self.board[0][col] != 0:
             print("columns is full.")
             return -1
         else:
-            d = self.board_height[x]
-            self.board_height[x] += 1
-            self.board[self.h - d -1][x] = c
-            self.finish = self.check_four(x, self.h-d-1, c)
+            d = self.board_height[col]
+            self.board_height[col] += 1
+            self.board[self.h - d -1][col] = c
+            self.hist.append((self.h-d-1, col))
+            self.finish = self.check_four(col, self.h-d-1, c)
             if self.finish != 0:
                 self.winner = c
                 print("winner is {}".format(c))
-            if self.board[0][x] != 0:
-                self.cand.remove(x)
+            if self.board[0][col] != 0:
+                self.cand.remove(col)
             return
     
     def check_four(self, x, y, c):
